@@ -5,15 +5,19 @@ category: "markup"
 tags: ["css", "cascading system"]
 ---
 
+# [CSS] Cascading System이란?
+
 ## Cascading System이란?
 
 - "하나의 엘리먼트에 대해서 다양한 효과가 영향력을 행사하려고 할 때 우선순위를 어떻게 설정하는 가에 대한 규칙"
 - HTML Element(요소)는 하나 이상의 스타일에 영향을 받을 수 있다. 그 때, 어떤 스타일을 적용받을 지에 대한 우선 순위가 정해져야 하는데 이것을 Cascading이라고 한다.
 - [MDN - CSS Cascade](https://developer.mozilla.org/en-US/docs/Web/CSS/Cascade)
 
+<br />
+
 ## Origin 사이의 우선 순위
 
-<div align="center">
+<div align="center" style="margin-bottom: 2rem;">
    <figure>
     <img src="./images/230116_1.png" alt="Cascading 단계" width="80%"/>
     <figcaption>
@@ -22,13 +26,15 @@ tags: ["css", "cascading system"]
   </figure>
 </div>
 
-<div align="center">
+<div align="center" style="margin-bottom: 2rem;">
   <img src="./images/230116_2.png" alt="Cascading 종류" width="80%" />
 </div>
 
 - **User-agent Stylesheets (=Browser Define)**: 브라우저가 기본으로 가지고 있는 스타일
 - **User Stylesheets (=User Define)**: 브라우저를 사용하는 사용자가 스타일시트를 지정 (요새 제공 안하는 경우가 많음)
 - **Author Stylesheets (=Developer Define)**: 웹 개발자가 사용하는 스타일시트 (우선 순위가 제일 높음)
+
+<br />
 
 ## 결정되는 3가지 요인
 
@@ -64,7 +70,7 @@ tags: ["css", "cascading system"]
 
 #### 명시도(Specificity) 계산법
 
-<div align="left">
+<div align="center" style="margin-bottom: 3rem;">
    <figure>
     <img src="./images/230116_3.png" alt="Specificity 계산" width="80%"/>
     <figcaption>
@@ -92,6 +98,8 @@ p {
   <p>Hello</p>
 </div>
 ```
+
+<br />
 
 ## ⚡Reference
 
