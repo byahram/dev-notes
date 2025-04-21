@@ -5,6 +5,8 @@ category: "markup"
 tags: ["html", "doctype"]
 ---
 
+# [HTML] Doctype이란?
+
 ## DOCTYPE이란?
 
 Doctype(Doccument Type Definition, DTD)이란 웹 페이지들의 html 코드를 확인해보면 맨 위에 \<!DOCTYPE html>이라고 선언되어 있는 부분이 있는데 이 것은 DTD라고 한다.
