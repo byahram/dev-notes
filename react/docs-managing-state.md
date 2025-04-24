@@ -9,13 +9,13 @@ tags: ["react", "official docs"]
 
 ## 목차
 
-- [(1) State를 사용해 Input 다루기: UI를 선언적인 방식으로 생각하기]()
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
+- [(1) State를 사용해 Input 다루기: UI를 선언적인 방식으로 생각하기](#1-state를-사용해-input-다루기-ui를-선언적인-방식으로-생각하기)
+- [(2) State 구조 선택하기: State 구조화 원칙](#2-state-구조-선택하기-state-구조화-원칙)
+- [(3) 컴포넌트 간 State 공유하기: State 끌어올리기](#3-컴포넌트-간-state-공유하기-state-끌어올리기)
+- [(4) State를 보존하고 초기화하기](#4-state를-보존하고-초기화하기)
+- [(5) State 로직을 reducer로 작성하기: reducer로 state를 다루는 방법](#5-state-로직을-reducer로-작성하기-reducer로-state를-다루는-방법)
+- [(6) Context를 사용해 데이터를 깊게 전달하기](#6-context를-사용해-데이터를-깊게-전달하기)
+- [(7) Reducer와 Context로 앱 확장하기](#7-reducer와-context로-앱-확장하기)
 
 ## (1) State를 사용해 Input 다루기: UI를 선언적인 방식으로 생각하기
 
@@ -319,16 +319,330 @@ export default function Accordion() {
   );
   ```
 
-## (5) State 로직을 리듀서로 작성하기
+## (5) State 로직을 reducer로 작성하기: reducer로 state를 다루는 방법
 
-###
+### useStae -> useReducer 방법
 
-###
+#### 1. state를 설정하는 것에서 action을 dispatch 함수로 전달하는 것으로 바꾸기
 
-###
+- 기존 useState 함수 : state를 설정하여 React에게 “무엇을 할 지”를 지시
 
-###
+```jsx
+function handleAddTask(text) {}
+function handleChangeTask(task) {}
+function handleDeleteTask(taskId) {}
+
+return (
+  <>
+    <h1>Prague itinerary</h1>
+    <AddTask onAddTask={handleAddTask} />
+    <TaskList
+      tasks={tasks}
+      onChangeTask={handleChangeTask}
+      onDeleteTask={handleDeleteTask}
+    />
+  </>
+);
+```
+
+- useReducer 함수 : `action`을 전달하여 “사용자가 방금 한 일”을 지정
+  - dispatch 함수에 넣어준 객체를 `action`이라고 한다.
+  - dispatch 함수는 액션 객체(action)를 전달받아 상태를 어떻게 업데이트할지 결정한다.
+
+```jsx
+function handleAddTask(text) {
+  dispatch(
+    // "action" 객체:
+    {
+      type: "added",
+      id: nextId++,
+      text: text,
+    }
+  );
+}
+
+function handleChangeTask(task) {
+  dispatch({ type: "changed", ~ });
+}
+
+function handleDeleteTask(taskId) {
+  dispatch({ type: "deleted", ~ });
+}
+```
+
+#### 2. reducer 함수 작성하기
+
+- if/else 문을 사용해도 되지만 reducer 함수에서는 switch 문을 자주 사용하며, 가독성에 도움이 된다
+- reducer 함수 : (현재 state, action 객체) 선언
+
+```jsx
+function tasksReducer(tasks, action) {
+  switch (action.type) {
+    case "added": {
+      return [
+        ...tasks,
+        {
+          id: action.id,
+          text: action.text,
+          done: false,
+        },
+      ];
+    }
+    case "changed": {
+      return tasks.map((t) => {
+        if (t.id === action.task.id) {
+          return action.task;
+        } else {
+          return t;
+        }
+      });
+    }
+    case "deleted": {
+      return tasks.filter((t) => t.id !== action.id);
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+}
+```
+
+#### 3. 컴포넌트에서 reducer 사용하기
+
+- useReducer hook은 두 개의 인자를 넘겨받고
+
+  1. reducer 함수
+  2. 초기 state 값
+
+- 두개의 인자를 반환한다.
+  1.  state를 담을 수 있는 값
+  2.  dispatch 함수 (사용자의 action을 reducer 함수에게 “전달하게 될”)
+
+```jsx
+// useState()
+const [tasks, setTasks] = useState(initialTasks);
+
+// useReducer()
+const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+```
+
+### useState vs useReducer
+
+| 항목        | useState                 | useReducer                               |
+| ----------- | ------------------------ | ---------------------------------------- |
+| 코드 크기   | 짧고 간단한 코드         | 초기 작성 코드가 많지만 반복 줄이기 유리 |
+| 가독성      | 단순한 경우 우수         | 복잡한 로직일수록 더 명확함              |
+| 디버깅      | 흐름 추적 어려울 수 있음 | action 기반 디버깅이 쉬움                |
+| 테스팅      | 컴포넌트에 종속적        | 순수 함수로 독립적인 테스트 가능         |
+| 복잡한 로직 | 처리 어려움              | 복잡한 상태 로직 처리에 유리함           |
+| 상태 변경   | setState로 직접 업데이트 | action 객체를 dispatch로 전달            |
+| 코드 구성   | 직관적이고 간단함        | 구조적이며 유지보수에 적합               |
+| 추천 상황   | 단순한 상태              | 다양한 동작(action)이 필요한 상태        |
+
+### reducer 잘 작성하기
+
+1. 순수 함수로 작성하기
+   - 같은 입력(state, action)에 대해서는 항상 **같은 출력**(newState)을 반환해야 한다.
+   - **사이드 이펙트**를 포함하면 안 된다.
+   - 배열이나 객체를 **직접 변경하지 말고**, 불변성을 유지한 상태로 업데이트해야 한다.
+2. 하나의 action은 하나의 사용자 상호작용을 설명해야 함
+   - **모든 action은 명확한 의도**를 가지고 있어야 하며, 로그를 통해 상호작용의 흐름을 쉽게 추적할 수 있어야 한다.
+
+### Immer로 간결한 reducer 작성하기
 
 ## (6) Context를 사용해 데이터를 깊게 전달하기
 
+### Context란?
+
+- Context는 React 컴포넌트 트리 전체에 데이터를 전달할 수 있게 해주는 방법이다.
+- props를 여러 단계에 걸쳐 전달하지 않아도 하위 컴포넌트가 값을 읽을 수 있다.
+- context는 정적인 값뿐 아니라 상태(state)나 변경 가능한 값도 전달 가능하다.
+- 렌더링마다 context 값이 변경되면 관련된 컴포넌트들이 자동으로 업데이트된다.
+
+### Context: Props 전달하기의 대안
+
+1. Context 생성하기
+
+   - `createContext()`는 context 객체를 생성
+   - 인수로는 기본값을 전달 (context provider가 없을 때 사용됨)
+
+     ```jsx
+     import { createContext } from "react";
+
+     export const LevelContext = createContext(1);
+     ```
+
+2. Context 사용하기
+
+   - `useContext(Context)`를 사용해서 context 값을 가져옴
+   - 반드시 React 컴포넌트의 최상단에서 사용해야 함 (조건문/반복문 내부는 X)
+
+     ```jsx
+     import { useContext } from "react";
+     import { LevelContext } from "./LevelContext.js";
+
+     export default function Heading({ level, children }) {
+       const level = useContext(LevelContext);
+
+       const Tag = `h${level}`;
+       return <Tag>{children}</Tag>;
+     }
+     ```
+
+3. Context 제공하기
+
+   - Context.Provider를 사용해서 하위 트리에 값을 제공
+
+     ```jsx
+     import { LevelContext } from "./LevelContext.js";
+
+     export default function Section({ level, children }) {
+       return (
+         <section>
+           <LevelContext.Provider value={level}>
+             {children}
+           </LevelContext.Provider>
+         </section>
+       );
+     }
+     ```
+
+4. 같은 컴포넌트에서 context를 사용하며 제공하기
+
+   - 각 Section은 자신보다 한 단계 위의 레벨을 Context로부터 받아서, 자식에게 level + 1을 자동으로 전달한다.
+   - 이제 `<Heading>`과 `<Section>` 모두 context를 통해 깊이를 자동으로 판단 가능하다.
+
+     ```jsx
+     import { useContext } from "react";
+     import { LevelContext } from "./LevelContext.js";
+
+     export default function Section({ children }) {
+       const level = useContext(LevelContext);
+
+       return (
+         <section className="section">
+           <LevelContext value={level + 1}>{children}</LevelContext>
+         </section>
+       );
+     }
+     ```
+
+### Context로 중간 컴포넌트 지나치기
+
+- context는 중간에 `<div>`나 다른 커스텀 컴포넌트가 있어도 상관없이 동작한다.
+  - 예: Heading 컴포넌트가 어디 있든 가장 가까운 LevelContext를 참조한다.
+
+### Context를 사용하기 전에 고려할 것
+
+1. Props 전달하기로 충분한 경우
+
+   - 여러 props가 여러 단계를 거쳐도 괜찮은 구조일 수 있다.
+     - 깊이 1~2단계라면 props 전달로도 충분하다.
+   - 데이터 흐름이 명확해져 유지보수가 쉽다.
+
+2. 중간 컴포넌트가 데이터를 사용하지 않는 경우
+
+   - 중간 컴포넌트를 함수로 추출하고 children으로 넘기면 간단해진다.
+
+     ```jsx
+     <!-- 비추천 -->
+     <Layout posts={posts} />
+     ```
+
+     ```jsx
+     <!-- 추천 -->
+     <!-- 이 구조가 중간 컴포넌트를 줄이기 쉬움 -->
+     function Layout({ children }) {
+       return <main>{children}</main>;
+     }
+
+     <Layout>
+       <Post />
+     </Layout>;
+     ```
+
+### Context 사용 예시
+
+- **테마 지정하기**: 다크 모드 / 라이트 모드 같은 시각적 테마 전달
+- **현재 계정**: 인증된 사용자 정보 전달
+- **라우팅**: 현재 페이지 위치 전달
+- **상태 관리**: 앱 전역 상태(예: 장바구니, 알림 상태 등)를 여러 컴포넌트에 전달
+
 ## (7) Reducer와 Context로 앱 확장하기
+
+- `useReducer`: 상태 업데이트 로직을 하나로 통합
+- `Context`: 상태와 dispatch 함수를 깊은 트리 구조에 전달 (prop drilling 제거)
+
+### 1단계. Context 생성
+
+- 상태 업데이트를 하나의 reducer 함수로 통합해 관리한다.
+- tasksReducer는 added, changed, deleted 액션 처리
+
+  ```jsx
+  const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+
+  // 현재 tasks 리스트를 제공
+  export const TasksContext = createContext(null);
+
+  // action을 dispatch하는 함수 제공
+  export const TasksDispatchContext = createContext(null);
+  ```
+
+### 2단계. State과 dispatch 함수를 context에 넣기
+
+```jsx
+import { useReducer } from "react";
+import { TasksContext, TasksDispatchContext } from "./TasksContext.js";
+import { tasksReducer, initialTasks } from "./tasksReducer.js";
+
+export default function TaskApp() {
+  const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+
+  return (
+    <TasksContext.Provider value={tasks}>
+      <TasksDispatchContext.Provider value={dispatch}>
+        <h1>Day off in Kyoto</h1>
+        <AddTask />
+        <TaskList />
+      </TasksDispatchContext.Provider>
+    </TasksContext.Provider>
+  );
+}
+```
+
+### 3단계. 트리 안에서 context 사용하기
+
+```jsx
+import { useContext } from "react";
+import { TasksContext, TasksDispatchContext } from "./TasksContext.js";
+
+const tasks = useContext(TasksContext);
+const dispatch = useContext(TasksDispatchContext);
+```
+
+### 리팩토링: Provider 분리
+
+```jsx
+export function TasksProvider({ children }) {
+  const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+
+  return (
+    <TasksContext.Provider value={tasks}>
+      <TasksDispatchContext.Provider value={dispatch}>
+        {children}
+      </TasksDispatchContext.Provider>
+    </TasksContext.Provider>
+  );
+}
+```
+
+```jsx
+function TaskApp() {
+  return (
+    <TasksProvider>
+      <AddTask />
+      <TaskList />
+    </TasksProvider>
+  );
+}
+```
