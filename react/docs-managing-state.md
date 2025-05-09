@@ -17,6 +17,8 @@ tags: ["react", "official docs"]
 - [(6) Context를 사용해 데이터를 깊게 전달하기](#6-context를-사용해-데이터를-깊게-전달하기)
 - [(7) Reducer와 Context로 앱 확장하기](#7-reducer와-context로-앱-확장하기)
 
+<br />
+
 ## (1) State를 사용해 Input 다루기: UI를 선언적인 방식으로 생각하기
 
 ### 1) 컴포넌트의 다양한 시각적 state 확인하기
@@ -78,6 +80,8 @@ const [isError, setIsError] = useState(false);
 - 제출 시: setStatus('submitting'), async 요청
 - 응답 성공: setStatus('success')
 - 응답 실패: setError(...), setStatus('typing')
+
+<br />
 
 ## (2) State 구조 선택하기: State 구조화 원칙
 
@@ -157,6 +161,8 @@ const [selectedId, setSelectedId] = useState(0);
 - 깊게 중첩된 구조는 업데이트가 어렵고 오류를 유발할 수 있다.
 - 가능한 한 평탄한 구조로 state를 구성한다.
 
+<br />
+
 ## (3) 컴포넌트 간 State 공유하기: State 끌어올리기
 
 두 컴포넌트의 상태가 항상 함께 변경되어야 할 경우, 각 자식 컴포넌트에서 상태를 제거하고 가장 가까운 공통 부모 컴포넌트로 상태를 옮긴 후, props를 통해 자식 컴포넌트에 전달하는 방식이다.
@@ -210,6 +216,8 @@ export default function Accordion() {
 3. 공통 부모에 state 추가하기
 
    - Accordion 컴포넌트에 activeIndex 상태를 추가하여 현재 활성화된 패널의 인덱스를 추적하고, 이를 기반으로 각 Panel의 isActive 값을 설정합니다.
+
+<br />
 
 ## (4) State를 보존하고 초기화하기
 
@@ -318,6 +326,8 @@ export default function Accordion() {
     </div>
   );
   ```
+
+<br />
 
 ## (5) State 로직을 reducer로 작성하기: reducer로 state를 다루는 방법
 
@@ -450,6 +460,8 @@ const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 
 ### Immer로 간결한 reducer 작성하기
 
+<br />
+
 ## (6) Context를 사용해 데이터를 깊게 전달하기
 
 ### Context란?
@@ -567,6 +579,8 @@ const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 - **현재 계정**: 인증된 사용자 정보 전달
 - **라우팅**: 현재 페이지 위치 전달
 - **상태 관리**: 앱 전역 상태(예: 장바구니, 알림 상태 등)를 여러 컴포넌트에 전달
+
+<br />
 
 ## (7) Reducer와 Context로 앱 확장하기
 
