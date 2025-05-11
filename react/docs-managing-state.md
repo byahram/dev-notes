@@ -283,11 +283,7 @@ export default function Accordion() {
      ```jsx
      const [isPlayerA, setIsPlayerA] = useState(true);
 
-     return (
-       <div>
-         {isPlayerA ? <Counter person="Taylor" /> : <Counter person="Sarah" />}
-       </div>
-     );
+     return <div>{isPaused ? <p>See you later!</p> : <Counter />}</div>;
      ```
 
 ### 같은 위치에서 같은 컴포넌트를 상태 분리(초기화)해야 하는 경우
