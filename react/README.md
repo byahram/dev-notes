@@ -5,5 +5,6 @@
 | 1.  | [[리액트 공식 문서 정리] 1. UI 표현하기](./docs-describing-ui.md)              | 2025-03-31 |
 | 2.  | [[리액트 공식 문서 읽기] 2. 상호작용 추가하기](./docs-adding-interactivity.md) | 2025-04-07 |
 | 3.  | [[리액트 공식 문서 정리] 3. State 관리하기](./docs-managing-state.md)          | 2025-04-14 |
+| 3.  | [[리액트 공식 문서 정리] 4. 탈출구](./docs-escape-hatches.md)                  | 2025-05-12 |
 
 <br />
